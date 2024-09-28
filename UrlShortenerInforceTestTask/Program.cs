@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UrlShortenerInforceTestTask.Data;
+using UrlShortenerInforceTestTask.Interfaces;
 using UrlShortenerInforceTestTask.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
