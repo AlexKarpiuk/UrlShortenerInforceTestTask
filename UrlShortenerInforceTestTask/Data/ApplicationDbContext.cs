@@ -8,7 +8,7 @@ namespace UrlShortenerInforceTestTask.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<AppUser> AppUser { get; set; }
-        public DbSet<Urls> Urls { get; set; }
+        public DbSet<Url> Urls { get; set; }
 
     }
 }

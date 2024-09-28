@@ -2,7 +2,7 @@
 
 namespace UrlShortenerInforceTestTask.Models
 {
-    public class Urls
+    public class Url
     {
         public int Id { get; set; }
 

@@ -1,14 +1,16 @@
-﻿using UrlShortenerInforceTestTask.Models;
+﻿using System.Diagnostics;
+using UrlShortenerInforceTestTask.Models;
 
 namespace UrlShortenerInforceTestTask.Interfaces
 {
     public interface IUrlsRepository
     {
-        Task<IEnumerable<Urls>> GetAllUrls();
-        Task<Urls> GetUrlById(string id);
-        bool Add(Urls url);
-        bool Update(Urls url);
-        bool Delete(Urls url);
+        Task<IEnumerable<Url>> GetAllUrls();
+        Task<Url> GetUrlById(int id);
+        Task<Url> GetUrlByIdNoTrackingAsync(int id);
+        bool Add(Url url);
+        bool Update(Url url);
+        bool Delete(Url url);
         bool Save();
     }
 }

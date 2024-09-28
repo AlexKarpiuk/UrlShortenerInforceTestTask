@@ -13,26 +13,31 @@ namespace UrlShortenerInforceTestTask.Repositories
         {
             _context = context;
         }
-        public bool Add(Urls url)
+        public bool Add(Url url)
         {
             _context.Add(url);
             return Save();
         }
 
-        public bool Delete(Urls url)
+        public bool Delete(Url url)
         {
-            _context.Add(url);
+            _context.Remove(url);
             return Save();
         }
 
-        public async Task<IEnumerable<Urls>> GetAllUrls()
+        public async Task<IEnumerable<Url>> GetAllUrls()
         {
             return await _context.Urls.ToListAsync();
         }
 
-        public async Task<Urls> GetUrlById(string id)
+        public async Task<Url> GetUrlById(int id)
         {
             return await _context.Urls.FindAsync(id);
+        }
+
+        public async Task<Url> GetUrlByIdNoTrackingAsync(int id)
+        {
+            return await _context.Urls.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public bool Save()
@@ -41,7 +46,7 @@ namespace UrlShortenerInforceTestTask.Repositories
             return saved > 0 ? true : false;
         }
 
-        public bool Update(Urls url)
+        public bool Update(Url url)
         {
             _context.Update(url);
             return Save();
