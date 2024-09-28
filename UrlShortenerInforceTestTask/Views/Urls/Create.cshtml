@@ -1,0 +1,13 @@
+﻿@using UrlShortenerInforceTestTask.ViewModels
+@model CreateUrlViewModel
+
+<form method="post" asp-action="Create" enctype="multipart/form-data">
+    @* <input type="hidden" id="AppUserId" name="AppUserId" asp-for="AppUserId" /> *@
+    <div class="form-group">
+        <label asp-for="OriginalUrl">OriginalUrl</label>
+        <input asp-for="OriginalUrl" class="form-control" placeholder="Enter Url">
+        <span asp-validation-for="OriginalUrl" class="text-danger"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

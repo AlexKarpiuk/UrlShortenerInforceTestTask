@@ -31,7 +31,7 @@ namespace UrlShortenerInforceTestTask.Repositories
             return await _context.AppUser.ToListAsync();
         }
 
-        public async Task<AppUser> GetUserById(string id)
+        public async Task<AppUser> GetUserById(int id)
         {
             return await _context.AppUser.FindAsync(id);
         }
