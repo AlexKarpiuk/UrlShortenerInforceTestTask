@@ -6,6 +6,7 @@ namespace UrlShortenerInforceTestTask.Interfaces
     {
         Task<IEnumerable<AppUser>> GetAllUsers();
         Task<AppUser> GetUserById(int id);
+        Task<AppUser> FindUserByEmailAsync(string email);
         bool Add(AppUser user);
         bool Update(AppUser user);
         bool Delete(AppUser user);

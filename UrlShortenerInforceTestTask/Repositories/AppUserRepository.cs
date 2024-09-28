@@ -26,6 +26,11 @@ namespace UrlShortenerInforceTestTask.Repositories
             return Save();
         }
 
+        public async Task<AppUser> FindUserByEmailAsync(string email)
+        {
+            return await _context.AppUser.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task<IEnumerable<AppUser>> GetAllUsers()
         {
             return await _context.AppUser.ToListAsync();
