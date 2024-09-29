@@ -64,7 +64,7 @@ namespace UrlShortenerInforceTestTask.Controllers
                 return View(registerViewModel);
             }
 
-            return RedirectToAction("ShowURLsTable", "Urls");
+            return RedirectToAction("ShortURLsTable", "Urls");
         }
 
         [HttpGet("Login")]
@@ -90,7 +90,11 @@ namespace UrlShortenerInforceTestTask.Controllers
                 if (passwordCheck)
                 {
                     bool userRole = user.IsAdmin;
-                    var claims = new List<Claim>() { new Claim("email", email) };
+                    var claims = new List<Claim>() 
+                    { 
+                        new Claim("userId", user.Id.ToString()),
+                        new Claim("email", email)                    
+                    };
                     if (userRole)
                         claims.Add(new Claim("role", "admin"));
                     else
