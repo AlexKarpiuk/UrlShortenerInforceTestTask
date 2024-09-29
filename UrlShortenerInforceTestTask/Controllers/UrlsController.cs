@@ -118,18 +118,29 @@ namespace UrlShortenerInforceTestTask.Controllers
 
             if (existingUrl != null)
             {
+                var handler = new JwtSecurityTokenHandler();
+                var claims = handler.ReadJwtToken(HttpContext.Session.GetString("JWToken")).Claims;
 
-                var url = new Url
+                int userCreatorId;
+                if (Int32.TryParse(claims.FirstOrDefault(c => c.Type == "userId")?.Value, out userCreatorId))
                 {
-                    Id = existingUrl.Id,
-                    UserId = 1, // for now
-                    OriginalUrl = editMovieViewModel.OriginalUrl,
-                    ShortUrl = editMovieViewModel.OriginalUrl,
-                };
+                    var url = new Url
+                    {
+                        Id = existingUrl.Id,
+                        UserId = userCreatorId,
+                        OriginalUrl = editMovieViewModel.OriginalUrl,
+                        ShortUrl = editMovieViewModel.OriginalUrl,
+                    };
 
-                _urlsRepository.Update(url);
+                    _urlsRepository.Update(url);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Couldn't update the record";
+                    return RedirectToAction("ShortURLsTable");
+                }
             }
 
             else return View(editMovieViewModel);
