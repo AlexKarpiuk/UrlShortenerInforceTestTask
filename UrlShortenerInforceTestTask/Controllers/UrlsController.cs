@@ -191,7 +191,7 @@ namespace UrlShortenerInforceTestTask.Controllers
             return RedirectToAction("ShortURLsTable");
         }
 
-        public IActionResult Privacy()
+        public IActionResult About()
         {
             return View();
         }
