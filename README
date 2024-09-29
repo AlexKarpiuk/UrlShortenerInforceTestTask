@@ -1,0 +1,39 @@
+About the Project
+This project is a URL shortening service that allows users to input a long URL and receive a shortened version. 
+The system generates a random 5-character sequence (letters only) that serves as the shortened URL. This short URL is saved in the database and can be used to redirect users to the original address.
+
+Main Features:
+- The user inputs a long URL into a search form.
+- A random 5-letter sequence is generated.
+- The sequence and corresponding original URL are stored in the database.
+- When a user visits the shortened URL, the system looks up the original URL and redirects to the correct web page.
+
+Technologies Used
+- ASP.NET MVC
+- Entity Framework Core
+- JWT Bearer Authentication
+- Bootstrap
+
+NuGet Packages:
+- Microsoft.EntityFrameworkCore
+- Microsoft.EntityFrameworkCore.Tools
+- Microsoft.AspNetCore.Authentication.JwtBearer
+- Microsoft.EntityFrameworkCore.SqlServer
+
+Project Setup
+Configuring the Database Connection
+1. Open the appsettings.json file.
+2. Find the ConnectionStrings section and add your SQL Server connection string with the appropriate credentials.
+
+Configuring JWT
+To enable JWT authentication, add the Key, Issuer, and Audience settings in the appsettings.json file. Here’s an example configuration:
+    "Key": "your-guid-key",  // Should be in GUID format
+    "Issuer": "your-issuer",
+    "Audience": "your-audience"
+
+Project Structure
+- Controllers: Contains controllers to handle requests and manage the URL shortening and redirection logic.
+- Models: Contains the models representing data that will be stored in the database, including original and shortened URLs.
+- Views: Contains Razor Pages used to render the user interface.
+- Data: The database context, which manages interactions with Entity Framework.
+- wwwroot: Contains static files like CSS, JavaScript, and Bootstrap assets.
