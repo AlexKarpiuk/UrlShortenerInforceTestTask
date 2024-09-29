@@ -3,10 +3,14 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>URL List</h2>
-    <a asp-action="Create" class="btn btn-success">Create New URL</a>
-</div>
+@if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>URL List</h2>
+        <a asp-action="Create" class="btn btn-success">Create New URL</a>
+    </div>
+}
+
 
 <table class="table">
     <thead>

@@ -109,8 +109,8 @@ namespace UrlShortenerInforceTestTask.Controllers
                         signingCredentials: signingCred);
 
                     var tokenString = new JwtSecurityTokenHandler().WriteToken(securityToken);
-                    await Console.Out.WriteLineAsync($"JWT: {tokenString}");
                     HttpContext.Session.SetString("JWToken", tokenString);
+
 
                     return RedirectToAction("ShortURLsTable", "Urls");
                     
@@ -121,6 +121,13 @@ namespace UrlShortenerInforceTestTask.Controllers
 
             TempData["Error"] = "Wrong credentials. Please, check your email or password";
             return View(loginViewModel);
+        }
+
+        [HttpGet("Logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("ShortURLsTable", "Urls");
         }
 
     }
