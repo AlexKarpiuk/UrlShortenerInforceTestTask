@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using UrlShortenerInforceTestTask.Interfaces;
 using UrlShortenerInforceTestTask.Models;
 using UrlShortenerInforceTestTask.Repositories;
+using UrlShortenerInforceTestTask.Utils;
 using UrlShortenerInforceTestTask.ViewModels;
 
 namespace UrlShortenerInforceTestTask.Controllers
@@ -29,25 +31,40 @@ namespace UrlShortenerInforceTestTask.Controllers
             return View(urls);
         }
 
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Create(CreateUrlViewModel creatUrlViewModel)
         {
             if (ModelState.IsValid)
             {
-                var url = new Url
-                {
-                    UserId = 1, // for now
-                    OriginalUrl = creatUrlViewModel.OriginalUrl,
-                    ShortUrl = creatUrlViewModel.OriginalUrl,
-                };
+                var handler = new JwtSecurityTokenHandler();
+                var claims = handler.ReadJwtToken(HttpContext.Session.GetString("JWToken")).Claims;
 
-                _urlsRepository.Add(url);
-                return RedirectToAction("Index");
+                int userCreatorId;
+                if(Int32.TryParse(claims.FirstOrDefault(c => c.Type == "userId")?.Value, out userCreatorId))
+                {
+                    var url = new Url
+                    {
+                        UserId = userCreatorId,
+                        OriginalUrl = creatUrlViewModel.OriginalUrl,
+                        ShortUrl = creatUrlViewModel.OriginalUrl,
+                    };
+
+                    _urlsRepository.Add(url);
+                    return RedirectToAction("ShortURLsTable");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "You can't delete this record";
+                    return RedirectToAction("ShortURLsTable");
+                }
+                
             }
             else
             {
@@ -57,6 +74,7 @@ namespace UrlShortenerInforceTestTask.Controllers
             return View(creatUrlViewModel); ;
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var url = await _urlsRepository.GetUrlById(id);
@@ -71,6 +89,7 @@ namespace UrlShortenerInforceTestTask.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, EditUrlViewModel editMovieViewModel)
         {
             if (!ModelState.IsValid)
@@ -100,7 +119,8 @@ namespace UrlShortenerInforceTestTask.Controllers
             else return View(editMovieViewModel);
         }
 
-        public async Task<IActionResult> ShortURLInfo(int id) 
+        [Authorize]
+        public async Task<IActionResult> ShortURLInfo(int id)
         {
             Url url = await _urlsRepository.GetUrlById(id);
             AppUser user = await _appUserRepository.GetUserById(url.UserId);
@@ -120,14 +140,27 @@ namespace UrlShortenerInforceTestTask.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var url = await _urlsRepository.GetUrlById(id);
-
             if (url == null) return View("Error");
 
-            _urlsRepository.Delete(url);
-            return RedirectToAction("Index");
+            var handler = new JwtSecurityTokenHandler();
+            var claims = handler.ReadJwtToken(HttpContext.Session.GetString("JWToken")).Claims;
+            
+            int userCreatorId;
+            if(Int32.TryParse(claims.FirstOrDefault(c => c.Type == "userId")?.Value, out userCreatorId))
+            {
+                var userCreator = await _appUserRepository.GetUserById(userCreatorId);
+                if (userCreator.IsAdmin || url.UserId == userCreator.Id)
+                {
+                    _urlsRepository.Delete(url);
+                    return RedirectToAction("ShortURLsTable");
+                }
+            }
+            TempData["ErrorMessage"] = "You can't delete this record";
+            return RedirectToAction("ShortURLsTable");
         }
 
         public IActionResult Privacy()
