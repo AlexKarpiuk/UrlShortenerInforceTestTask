@@ -37,3 +37,5 @@ Project Structure
 - Views: Contains Razor Pages used to render the user interface.
 - Data: The database context, which manages interactions with Entity Framework.
 - wwwroot: Contains static files like CSS, JavaScript, and Bootstrap assets.
+
+Additionally, I plan to add several unit tests and integrate Angular pages to enhance the functionality and front-end user experience of the application.
