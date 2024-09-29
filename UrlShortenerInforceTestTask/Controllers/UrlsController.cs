@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,8 +26,23 @@ namespace UrlShortenerInforceTestTask.Controllers
             _appUserRepository = appUserRepository;
         }
 
+        public async Task<IActionResult> RedirectToOriginal(string shortUrl)
+        {
+            var record = await _urlsRepository.GetByShortenedUrlAsync(shortUrl);
+
+            if (record != null)
+            {
+                return Redirect(record.OriginalUrl);
+            }
+            else
+            {
+                return NotFound("URL not found");
+            }
+        }
+
         public async Task<IActionResult> ShortURLsTable()
         {
+            
             var urls = await _urlsRepository.GetAllUrls();
             return View(urls);
         }
@@ -39,13 +55,13 @@ namespace UrlShortenerInforceTestTask.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Create(CreateUrlViewModel creatUrlViewModel)
+        public async Task<IActionResult> Create(CreateUrlViewModel creatUrlViewModel)
         {
             if (ModelState.IsValid)
-            {
+            {               
                 var handler = new JwtSecurityTokenHandler();
                 var claims = handler.ReadJwtToken(HttpContext.Session.GetString("JWToken")).Claims;
-
+                
                 int userCreatorId;
                 if(Int32.TryParse(claims.FirstOrDefault(c => c.Type == "userId")?.Value, out userCreatorId))
                 {
@@ -53,8 +69,8 @@ namespace UrlShortenerInforceTestTask.Controllers
                     {
                         UserId = userCreatorId,
                         OriginalUrl = creatUrlViewModel.OriginalUrl,
-                        ShortUrl = creatUrlViewModel.OriginalUrl,
-                    };
+                        ShortUrl = RandomStringGenerator.GenerateRandomString(5)
+                    };                    
 
                     _urlsRepository.Add(url);
                     return RedirectToAction("ShortURLsTable");
@@ -124,11 +140,12 @@ namespace UrlShortenerInforceTestTask.Controllers
         {
             Url url = await _urlsRepository.GetUrlById(id);
             AppUser user = await _appUserRepository.GetUserById(url.UserId);
-
+            var request = HttpContext.Request;
+ 
             var detailsUrlViewModel = new DetailsUrlViewModel()
             {
                 OriginalUrl = url.OriginalUrl,
-                ShortenedUrl = url.ShortUrl,
+                ShortenedUrl = $"{request.Scheme}://{request.Host}{request.PathBase}/{url.ShortUrl}",
 
                 UserName = user.FirstName,
                 UserLastName = user.LastName,
