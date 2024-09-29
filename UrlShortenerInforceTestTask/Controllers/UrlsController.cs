@@ -129,12 +129,12 @@ namespace UrlShortenerInforceTestTask.Controllers
                         Id = existingUrl.Id,
                         UserId = userCreatorId,
                         OriginalUrl = editMovieViewModel.OriginalUrl,
-                        ShortUrl = editMovieViewModel.OriginalUrl,
+                        ShortUrl = RandomStringGenerator.GenerateRandomString(5),
                     };
 
                     _urlsRepository.Update(url);
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("ShortURLsTable");
                 }
                 else
                 {
