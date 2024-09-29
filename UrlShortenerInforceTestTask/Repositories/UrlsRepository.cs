@@ -30,6 +30,11 @@ namespace UrlShortenerInforceTestTask.Repositories
             return await _context.Urls.ToListAsync();
         }
 
+        public async Task<Url> GetByShortenedUrlAsync(string shortenedUrl)
+        {
+            return await _context.Urls.FirstOrDefaultAsync(str => str.ShortUrl == shortenedUrl);
+        }
+
         public async Task<Url> GetUrlById(int id)
         {
             return await _context.Urls.FindAsync(id);

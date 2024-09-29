@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Url>
 @{
     ViewData["Title"] = "Home Page";
+    var request = Context.Request;
 }
 
 @if (TempData["ErrorMessage"] != null)
@@ -40,12 +41,13 @@
     <tbody>
         @foreach (var item in Model)
         {
+            string fullUrl = $"{request.Scheme}://{request.Host}{request.PathBase}/{item.ShortUrl}";
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.OriginalUrl)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ShortUrl)
+                    @Html.DisplayFor(modelItem => fullUrl)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreatedDate)
